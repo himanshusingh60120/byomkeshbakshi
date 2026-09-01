@@ -1,0 +1,4 @@
+# .env.example
+# Neon (or any) Postgres connection string.
+# Used by the app at runtime AND by the crawler scripts.
+DATABASE_URL="postgresql://user:password@ep-xxx-pooler.region.aws.neon.tech/neondb?sslmode=require"
