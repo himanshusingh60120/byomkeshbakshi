@@ -1,0 +1,8 @@
+# .gitignore
+node_modules
+.next
+.env
+.env.local
+.vercel
+*.log
+ 
