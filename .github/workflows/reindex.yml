@@ -1,0 +1,35 @@
+# .github/workflows/reindex.yml
+name: Reindex sitemaps
+
+on:
+  schedule:
+    - cron: '0 20 * * *' # 01:30 IST daily
+  workflow_dispatch:
+    inputs:
+      property:
+        description: 'Property id (blank = all)'
+        required: false
+      force:
+        description: 'Re-fetch every URL (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Crawl
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          ARGS="--concurrency=10"
+          if [ -n "${{ github.event.inputs.property }}" ]; then ARGS="$ARGS --property=${{ github.event.inputs.property }}"; fi
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          node scripts/crawl.mjs $ARGS
